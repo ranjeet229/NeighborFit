@@ -14,3 +14,4 @@ router.route("/logout").get(logout);
 router.route("/profile/update").post(isAuthenticated, updateProfile);
 
 export default router;
+
