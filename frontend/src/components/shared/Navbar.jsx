@@ -22,7 +22,10 @@ const Navbar = () => {
             <li className='cursor-pointer hover:text-blue-500'>Browse</li>
           </ul>
           {/* if there is no user then it show sigin and signup button if user then popover will show */}
-          
+            
+            {
+              
+            }
 
           {/* Avatar Popover */}
           <Popover>
