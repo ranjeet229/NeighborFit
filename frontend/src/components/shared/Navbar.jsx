@@ -3,6 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Avatar, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
 import { LogOut, User2 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
   const user = false // Change to false to simulate logged-out state
@@ -27,18 +28,22 @@ const Navbar = () => {
 
           {!user ? (
             <div className='flex items-center gap-3'>
-              <Button
-                variant="outline"
-                className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition"
-              >
-                Login
-              </Button>
-              <Button
-                variant="default"
-                className="bg-blue-500 hover:bg-blue-600 transition"
-              >
-                Signup
-              </Button>
+              <Link to="/login">
+                <Button
+                  variant="outline"
+                  className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition"
+                >
+                  Login
+                </Button>
+              </Link>
+              <Link to="signup">
+                <Button
+                  variant="default"
+                  className="bg-blue-500 hover:bg-blue-600 transition"
+                >
+                  Signup
+                </Button>
+              </Link>
             </div>
           ) : (
             <Popover>
