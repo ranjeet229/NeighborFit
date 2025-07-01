@@ -8,6 +8,9 @@ import { Button } from '../ui/button'
 import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
+import { Loader2 } from 'lucide-react'
+import { useDispatch, useSelector } from 'react-redux'
+import { setLoading } from '@/redux/authSlice'
 
 
 const Signup = () => {
@@ -18,8 +21,10 @@ const Signup = () => {
     password: "",
     file: ""
   });
+  const { loading } = useSelector(store => store.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   }
@@ -37,20 +42,23 @@ const Signup = () => {
       formData.append("file", input.file);
     }
     try {
-    const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data"
-      },
-      withCredentials:true,
-    });
-    if(res.data.success){
-      navigate("/login");
-      toast.success(res.data.message);
+      dispatch(setLoading(true));
+      const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        navigate("/login");
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }finally{
+      dispatch(setLoading(false));
     }
-  } catch (error) {
-    console.error(error);
-  }
-};
+  };
 
   return (
     <div>
@@ -107,7 +115,9 @@ const Signup = () => {
               className="cursor-pointer"
             />
           </div>
-          <Button type="submit" className="w-full my-4">Signup</Button>
+          {
+            loading ? <Button className='w-full my-4'> <Loader2 className='mr-2 h-4 animate-spin' />Please wait</Button> : <Button type="submit" className="cursor-pointer w-full my-4">Signup</Button>
+          }
           <span className='text-sm'>Already have an account? <Link to="/login" className='text-blue-500 '>Login</Link></span>
         </form>
 
