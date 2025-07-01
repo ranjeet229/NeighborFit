@@ -1,32 +1,80 @@
 
-import React from 'react'
+import React, { useState } from 'react'
 import Navbar from '../shared/Navbar'
-import { Form, Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import axios from 'axios'
+import { USER_API_END_POINT } from '@/utils/constant'
+import { toast } from 'sonner'
 
 
 const Signup = () => {
+  const [input, setInput] = useState({
+    fullname: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    file: ""
+  });
+  const navigate = useNavigate();
+  
+  const changeEventHandler = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+  }
+  const changeFileHandler = (e) => {
+    setInput({ ...input, file: e.target.files?.[0] });
+  }
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("fullname", input.fullname);
+    formData.append("email", input.email);
+    formData.append("phoneNumber", input.phoneNumber);
+    formData.append("password", input.password);
+    if (input.file) {
+      formData.append("file", input.file);
+    }
+    try {
+    const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      withCredentials:true,
+    });
+    if(res.data.success){
+      navigate("/login");
+      toast.success(res.data.message);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
   return (
     <div>
       <Navbar />
       <div className='flex items-center justify-center max-w-7xl mx-auto'>
-        <form action="" className='w-1/2 border border-gray-200 rounded-md p-4 my-10'>
+        <form onSubmit={submitHandler} className='w-1/2 border border-gray-200 rounded-md p-4 my-10'>
           <h1 className='font-bold text-xl mb-5'>Sign Up</h1>
           <div className='my-2'>
             <Label className="my-2">Full Name</Label>
             <Input
               type="text"
-              placeholder="fullname"
+              value={input.fullname}
+              name="fullname"
+              onChange={changeEventHandler}
+              placeholder="name"
             />
           </div>
           <div className='my-2'>
             <Label >Email</Label>
             <Input
               type="email"
+              value={input.email}
               name="email"
-
+              onChange={changeEventHandler}
               placeholder="abc@gmail.com"
             />
           </div>
@@ -34,9 +82,9 @@ const Signup = () => {
             <Label >Phone Number</Label>
             <Input
               type="text"
-
+              value={input.phoneNumber}
               name="phoneNumber"
-
+              onChange={changeEventHandler}
               placeholder="123..."
             />
           </div>
@@ -44,8 +92,9 @@ const Signup = () => {
             <Label >Password</Label>
             <Input
               type="password"
-
+              value={input.password}
               name="password"
+              onChange={changeEventHandler}
               placeholder="abc..."
             />
           </div>
@@ -54,6 +103,7 @@ const Signup = () => {
             <Input
               accept="image/*"
               type="file"
+              onChange={changeFileHandler}
               className="cursor-pointer"
             />
           </div>
